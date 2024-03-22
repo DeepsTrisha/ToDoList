@@ -6,6 +6,8 @@ function addTask() {
         var li = document.createElement("li");
         var text = document.createTextNode(inputValue);
         li.appendChild(text);
+        
+        
         var taskList = document.getElementById("taskList");
         taskList.appendChild(li);
 
@@ -13,13 +15,25 @@ function addTask() {
         deleteBtn.innerHTML = "Delete";
         deleteBtn.className = "delete";
         li.appendChild(deleteBtn);
+
+       
         deleteBtn.onclick = function() {
             var listItem = this.parentElement;
             listItem.style.display = "none";
         };
+
         li.onclick = function() {
-            this.classList.toggle("completed");
+            var newTask = prompt("Edit task", this.innerText.trim());
+            if (newTask !== null) {
+                this.firstChild.textContent = newTask;
+            }
+            var markCompleted = confirm("Mark this task as completed?");
+            if (markCompleted) {
+                this.classList.toggle("completed");
+            }
         };
+
+       
         document.getElementById("taskInput").value = "";
     }
 }
