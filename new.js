@@ -1,39 +1,61 @@
+var tasks = [];
+
 function addTask() {
     var inputValue = document.getElementById("taskInput").value;
     if (inputValue === '') {
         alert("You must write something!");
     } else {
-        var li = document.createElement("li");
-        var text = document.createTextNode(inputValue);
-        li.appendChild(text);
         
+        var task = {
+            text: inputValue,
+            completed: false
+        };
         
-        var taskList = document.getElementById("taskList");
-        taskList.appendChild(li);
+        tasks.push(task);
 
-        var deleteBtn = document.createElement("button");
-        deleteBtn.innerHTML = "Delete";
-        deleteBtn.className = "delete";
-        li.appendChild(deleteBtn);
+        renderTasks();
 
-       
-        deleteBtn.onclick = function() {
-            var listItem = this.parentElement;
-            listItem.style.display = "none";
-        };
-
-        li.onclick = function() {
-            var newTask = prompt("Edit task", this.innerText.trim());
-            if (newTask !== null) {
-                this.firstChild.textContent = newTask;
-            }
-            var markCompleted = confirm("Mark this task as completed?");
-            if (markCompleted) {
-                this.classList.toggle("completed");
-            }
-        };
-
-       
         document.getElementById("taskInput").value = "";
     }
 }
+
+
+function renderTasks() {
+    var taskList = document.getElementById("taskList");
+    taskList.innerHTML = ""; 
+    
+    tasks.forEach(function(task, index) {
+        var li = document.createElement("li");
+        li.textContent = task.text;
+        if (task.completed) {
+            li.classList.add("completed");
+        }
+        
+        li.addEventListener("click", function() {
+            var newTask = prompt("Edit task", task.text);
+            if (newTask !== null) {
+                task.text = newTask;
+                renderTasks(); 
+            }
+            var markCompleted = confirm("Mark this task as completed?");
+            if (markCompleted) {
+                task.completed = !task.completed;
+                renderTasks(); 
+            }
+        });
+        
+        var deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.className = "delete";
+        deleteBtn.addEventListener("click", function(event) {
+            event.stopPropagation(); 
+            tasks.splice(index, 1); 
+            renderTasks(); 
+        });
+        li.appendChild(deleteBtn);
+
+        taskList.appendChild(li);
+    });
+}
+
+renderTasks();
